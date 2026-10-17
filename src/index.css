@@ -1,0 +1,82 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+  body {
+    font-family: 'Inter', system-ui, sans-serif;
+    background-color: #f1f5f9;
+    color: #1e293b;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    font-family: 'Sora', system-ui, sans-serif;
+    letter-spacing: -0.02em;
+  }
+}
+
+@layer utilities {
+  .text-gradient-sea {
+    background: linear-gradient(120deg, #0a82ab 0%, #0aa3d4 40%, #f08412 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .text-gradient-deep {
+    background: linear-gradient(120deg, #0f6685 0%, #15536d 50%, #0a82ab 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
+  .glass {
+    background: rgba(255, 255, 255, 0.72);
+    backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.9);
+    box-shadow: 0 8px 30px -12px rgba(15, 102, 133, 0.18);
+  }
+  .glass-light {
+    background: rgba(255, 255, 255, 0.5);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.7);
+  }
+  .card-3d {
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
+  }
+  .card-3d:hover {
+    transform: perspective(1000px) rotateX(3deg) rotateY(-5deg) translateY(-8px);
+    box-shadow: 0 30px 60px -20px rgba(10, 163, 212, 0.30), 0 0 0 1px rgba(34, 194, 240, 0.30);
+  }
+  .shadow-glow {
+    box-shadow: 0 0 40px -8px rgba(34, 194, 240, 0.40);
+  }
+  .shadow-soft {
+    box-shadow: 0 10px 40px -12px rgba(15, 102, 133, 0.15);
+  }
+  .shadow-card {
+    box-shadow: 0 4px 24px -8px rgba(15, 102, 133, 0.12), 0 1px 3px rgba(15, 102, 133, 0.08);
+  }
+  .grid-bg {
+    background-image:
+      linear-gradient(rgba(15, 102, 133, 0.06) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(15, 102, 133, 0.06) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .grid-bg-light {
+    background-image:
+      linear-gradient(rgba(34, 194, 240, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(34, 194, 240, 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .scrollbar-hide::-webkit-scrollbar { display: none; }
+  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+  .section-gradient {
+    background: linear-gradient(180deg, #f8fafc 0%, #ecfbff 50%, #f1f5f9 100%);
+  }
+  .hero-overlay {
+    background: linear-gradient(105deg, rgba(241,245,249,0.92) 0%, rgba(236,251,255,0.75) 45%, rgba(241,245,249,0.30) 100%);
+  }
+}

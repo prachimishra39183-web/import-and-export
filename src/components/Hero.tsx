@@ -1,24 +1,28 @@
 import { ArrowRight, Waves, Globe2, Play } from 'lucide-react';
 import { stats } from '@/data';
 
-const heroImg =
-  'https://images.pexels.com/photos/9806482/pexels-photo-9806482.jpeg?auto=compress&cs=tinysrgb&h=900&w=1600';
-
 export default function Hero() {
   return (
     <section id="home" className="relative min-h-screen overflow-hidden pt-24">
       {/* background */}
       <div className="absolute inset-0">
-        <img
-          src={heroImg}
-          alt="Cargo ship at sea"
-          className="h-full w-full object-cover"
-        />
-        <div className="absolute inset-0 hero-overlay" />
-        <div className="absolute inset-0 bg-gradient-to-t from-cloud-100 via-transparent to-cloud-100/40" />
-        <div className="absolute inset-0 grid-bg opacity-30" />
-      </div>
+  <video
+    autoPlay
+    muted
+    loop
+    playsInline
+    className="h-full w-full object-cover"
+  >
+    <source
+      src="/cargo-ship.mp4"
+      type="video/mp4"
+    />
+  </video>
 
+  <div className="absolute inset-0 hero-overlay" />
+  <div className="absolute inset-0 bg-gradient-to-t from-cloud-100 via-transparent to-cloud-100/40" />
+  <div className="absolute inset-0 grid-bg opacity-30" />
+</div>
       {/* floating accent orbs */}
       <div className="pointer-events-none absolute -left-20 top-40 h-72 w-72 rounded-full bg-sea-200/40 blur-3xl animate-pulseGlow" />
       <div className="pointer-events-none absolute right-10 top-60 h-64 w-64 rounded-full bg-amber-200/40 blur-3xl animate-pulseGlow" />
@@ -29,12 +33,6 @@ export default function Hero() {
             <Waves className="h-3.5 w-3.5" />
             Ocean Freight Specialists
           </span>
-
-          <h1 className="mt-6 font-display text-4xl font-700 leading-[1.05] text-ink-800 sm:text-5xl lg:text-[64px]">
-            Move goods across oceans,
-            <span className="block text-gradient-sea">on your order.</span>
-          </h1>
-
           <p className="mt-6 max-w-xl text-lg leading-relaxed text-ink-500">
             Order-based import &amp; export. You place the order, we sail it across
             the world's busiest sea lanes — tracked port to port.

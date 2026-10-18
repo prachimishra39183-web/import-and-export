@@ -1,77 +1,175 @@
-import { Ship, Anchor } from 'lucide-react';
+
+import { Ship, Anchor, Globe2, ArrowRight } from 'lucide-react';
 import { journey } from '@/data';
+
+const themes = [
+  {
+    color: '#38BDF8',
+    bg: '#102F49',
+    border: '#235675',
+  },
+  {
+    color: '#5EEAD4',
+    bg: '#103B3A',
+    border: '#22635D',
+  },
+  {
+    color: '#FBBF65',
+    bg: '#3A3023',
+    border: '#69502F',
+  },
+  {
+    color: '#C4B5FD',
+    bg: '#292744',
+    border: '#49446F',
+  },
+];
 
 export default function Journey() {
   return (
-    <section id="journey" className="relative section-gradient py-24 lg:py-32">
-      <div className="pointer-events-none absolute right-0 top-1/3 h-80 w-80 rounded-full bg-sea-100/60 blur-3xl" />
-      <div className="relative mx-auto max-w-5xl px-5 lg:px-8">
-        <div className="mx-auto max-w-2xl text-center">
-          <span className="text-sm font-600 uppercase tracking-[0.2em] text-sea-600">
-            Our Journey
-          </span>
-          <h2 className="mt-4 font-display text-3xl font-700 text-ink-800 sm:text-4xl lg:text-5xl">
-            From one container to a global network
-          </h2>
-          <p className="mt-5 text-base text-ink-500">
-            A decade of building sea trade routes, one order at a time.
+    <section
+      id="journey"
+      className="relative overflow-hidden section-gradient py-24 lg:py-32"
+    >
+      {/* Subtle background decoration; section background stays unchanged */}
+      <div className="pointer-events-none absolute right-0 top-20 h-72 w-72 rounded-full bg-cyan-400/5 blur-3xl" />
+
+      <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
+        {/* Heading */}
+        <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+          <div>
+            <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.22em] text-cyan-400">
+              <Anchor className="h-4 w-4" />
+              Our Journey
+            </span>
+
+            <h2 className="mt-4 max-w-2xl font-display text-3xl font-bold leading-tight text-ink-800 sm:text-4xl lg:text-5xl">
+              Every milestone tells
+              <span className="block text-gradient-sea">
+                a story of progress.
+              </span>
+            </h2>
+          </div>
+
+          <p className="max-w-sm text-sm leading-7 text-ink-500">
+            Discover the milestones that have shaped our journey across
+            markets, oceans, and global connections.
           </p>
         </div>
 
+        {/* Journey route */}
         <div className="relative mt-16">
-          {/* vertical line */}
-          <div className="absolute left-4 top-0 h-full w-0.5 bg-gradient-to-b from-sea-400 via-sea-300 to-amber-400 md:left-1/2 md:-translate-x-1/2" />
+          {/* Horizontal route line on desktop */}
+          <div className="absolute left-0 right-0 top-7 hidden h-px bg-gradient-to-r from-sky-400/10 via-cyan-400/60 to-violet-400/10 md:block" />
 
-          <div className="space-y-10">
+          <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
             {journey.map((m, i) => {
-              const left = i % 2 === 0;
+              const theme = themes[i % themes.length];
+
               return (
-                <div
+                <article
                   key={m.id}
-                  className={`relative flex items-start gap-6 md:gap-0 ${
-                    left ? 'md:flex-row' : 'md:flex-row-reverse'
-                  }`}
+                  className="group relative pt-0 md:pt-0"
                 >
-                  {/* node */}
-                  <div className="absolute left-4 top-1 z-10 -translate-x-1/2 md:left-1/2">
-                    <div className="grid h-9 w-9 place-items-center rounded-full bg-gradient-to-br from-sea-500 to-sea-700 shadow-glow ring-4 ring-cloud-100">
-                      <Anchor className="h-4 w-4 text-white" />
+                  {/* Route marker */}
+                  <div className="relative z-10 mb-5 hidden h-14 items-center md:flex">
+                    <div
+                      className="grid h-14 w-14 place-items-center rounded-2xl border-4 shadow-lg transition-transform duration-300 group-hover:rotate-6 group-hover:scale-105"
+                      style={{
+                        backgroundColor: theme.bg,
+                        borderColor: '#061426',
+                        boxShadow: `0 0 0 1px ${theme.border}`,
+                      }}
+                    >
+                      {i === journey.length - 1 ? (
+                        <Ship
+                          className="h-6 w-6"
+                          style={{ color: theme.color }}
+                        />
+                      ) : (
+                        <Anchor
+                          className="h-6 w-6"
+                          style={{ color: theme.color }}
+                        />
+                      )}
                     </div>
                   </div>
 
-                  {/* card */}
-                  <div className={`ml-12 flex-1 md:ml-0 md:w-1/2 ${left ? 'md:pr-12 md:text-right' : 'md:pl-12'}`}>
-                    <div className="rounded-3xl bg-white p-6 shadow-card transition-all hover:shadow-soft">
-                      <span className="inline-block rounded-full bg-sea-50 px-3 py-1 font-display text-sm font-700 text-sea-700">
+                  {/* Colourful milestone card */}
+                  <div
+                    className="relative h-full min-h-[255px] overflow-hidden rounded-3xl border p-6 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-2xl sm:p-7"
+                    style={{
+                      backgroundColor: theme.bg,
+                      borderColor: theme.border,
+                    }}
+                  >
+                    {/* Oversized decorative number */}
+                    <div
+                      className="pointer-events-none absolute -right-2 -top-7 select-none font-display text-8xl font-extrabold opacity-[0.08]"
+                      style={{ color: theme.color }}
+                    >
+                      {String(i + 1).padStart(2, '0')}
+                    </div>
+
+                    {/* Card header */}
+                    <div className="relative flex items-center justify-between gap-3">
+                      <span
+                        className="rounded-full px-3 py-1.5 text-sm font-bold"
+                        style={{
+                          backgroundColor: `${theme.color}18`,
+                          color: theme.color,
+                        }}
+                      >
                         {m.year}
                       </span>
-                      <h3 className="mt-3 font-display text-lg font-700 text-ink-800">
-                        {m.title}
-                      </h3>
-                      <p className="mt-2 text-sm leading-relaxed text-ink-500">
-                        {m.desc}
-                      </p>
-                    </div>
-                  </div>
 
-                  {/* spacer for other half */}
-                  <div className="hidden md:block md:w-1/2" />
-                </div>
+                      <ArrowRight
+                        className="h-5 w-5 -rotate-45 transition-transform duration-300 group-hover:translate-x-1 group-hover:-translate-y-1"
+                        style={{ color: theme.color }}
+                      />
+                    </div>
+
+                    <h3 className="relative mt-8 font-display text-xl font-bold leading-snug text-white">
+                      {m.title}
+                    </h3>
+
+                    <p className="relative mt-3 text-sm leading-7 text-slate-300">
+                      {m.desc}
+                    </p>
+
+                    {/* Bottom accent */}
+                    <div
+                      className="absolute bottom-0 left-0 h-1 w-1/3 transition-all duration-300 group-hover:w-full"
+                      style={{ backgroundColor: theme.color }}
+                    />
+                  </div>
+                </article>
               );
             })}
           </div>
+        </div>
 
-          {/* endpoint */}
-          <div className="relative mt-10 flex justify-center">
-            <div className="grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-amber-400 to-amber-600 shadow-glow ring-4 ring-cloud-100">
-              <Ship className="h-6 w-6 text-white" />
+        {/* Closing statement */}
+        <div className="mt-12 flex flex-col gap-4 rounded-2xl border border-white/10 bg-white/[0.04] p-6 sm:flex-row sm:items-center sm:justify-between sm:p-8">
+          <div className="flex items-center gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl bg-cyan-400/10">
+              <Globe2 className="h-6 w-6 text-cyan-300" />
+            </div>
+
+            <div>
+              <h3 className="font-display text-lg font-bold text-ink-800">
+                The journey continues
+              </h3>
+              <p className="mt-1 text-sm text-ink-500">
+                New horizons. Stronger connections. A world of possibilities.
+              </p>
             </div>
           </div>
-          <p className="mt-4 text-center font-display text-sm font-600 text-ink-400">
-            …and still sailing.
-          </p>
+
+          <Ship className="hidden h-8 w-8 text-cyan-400 sm:block" />
         </div>
       </div>
     </section>
   );
 }
+ 

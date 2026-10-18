@@ -1,82 +1,185 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  html {
-    scroll-behavior: smooth;
-  }
-  body {
-    font-family: 'Inter', system-ui, sans-serif;
-    background-color: #f1f5f9;
-    color: #1e293b;
-    -webkit-font-smoothing: antialiased;
-  }
-  h1, h2, h3, h4 {
-    font-family: 'Sora', system-ui, sans-serif;
-    letter-spacing: -0.02em;
-  }
+/* ===== GLOBAL THEME ===== */
+:root {
+  color-scheme: dark;
+  --navy: #061426;
+  --navy-light: #0a1d33;
+  --navy-card: #0d2540;
+  --ocean: #123b61;
+  --cyan: #42d5f5;
+  --text-primary: #f4f8fc;
+  --text-secondary: #b4c4d6;
 }
 
-@layer utilities {
-  .text-gradient-sea {
-    background: linear-gradient(120deg, #0a82ab 0%, #0aa3d4 40%, #f08412 110%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+html {
+  scroll-behavior: smooth;
+  background: var(--navy);
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: var(--navy);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4 {
+  font-family: 'Sora', system-ui, sans-serif;
+  letter-spacing: -0.025em;
+}
+
+::selection {
+  background: rgba(66, 213, 245, 0.35);
+  color: white;
+}
+
+/* ===== EXISTING CUSTOM PALETTE CLASSES ===== */
+.bg-cloud-100 { background-color: var(--navy) !important; }
+.bg-cloud-50 { background-color: #091a2e !important; }
+
+.text-ink-800 { color: #f4f8fc !important; }
+.text-ink-700 { color: #e2edf7 !important; }
+.text-ink-600 { color: #cbd8e6 !important; }
+.text-ink-500 { color: #b4c4d6 !important; }
+.text-ink-400 { color: #91a8bf !important; }
+
+.text-sea-600,
+.text-sea-700 { color: var(--cyan) !important; }
+
+.bg-sea-50,
+.bg-sea-100 { background-color: #102c46 !important; }
+
+.bg-sea-200 { background-color: #173d5c !important; }
+
+.bg-white {
+  background-color: var(--navy-light) !important;
+}
+
+.bg-white\/70,
+.bg-white\/80,
+.bg-white\/90 {
+  background-color: rgba(10, 29, 51, 0.92) !important;
+}
+
+.border-white,
+.border-white\/10 {
+  border-color: rgba(180, 210, 235, 0.14) !important;
+}
+
+/* ===== SECTION BACKGROUNDS ===== */
+.section-gradient {
+  background: linear-gradient(
+    180deg,
+    #061426 0%,
+    #091b30 50%,
+    #061426 100%
+  ) !important;
+}
+
+.grid-bg,
+.grid-bg-light {
+  background-image:
+    linear-gradient(rgba(66, 213, 245, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(66, 213, 245, 0.045) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* ===== VIDEO HERO OVERLAY ===== */
+.hero-overlay {
+  background: linear-gradient(
+    90deg,
+    rgba(3, 13, 26, 0.70) 0%,
+    rgba(3, 13, 26, 0.38) 48%,
+    rgba(3, 13, 26, 0.12) 100%
+  ) !important;
+}
+
+/* Keep the video sharp; avoid filters on the video itself */
+video {
+  filter: none;
+}
+
+/* ===== CARDS AND GLASS EFFECTS ===== */
+.glass {
+  background: rgba(10, 29, 51, 0.82);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(180, 210, 235, 0.14);
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.2);
+}
+
+.glass-light {
+  background: rgba(10, 29, 51, 0.68);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(180, 210, 235, 0.12);
+}
+
+.shadow-card,
+.shadow-soft {
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.18);
+}
+
+.card-3d {
+  transform-style: preserve-3d;
+  transition:
+    transform 0.35s ease,
+    box-shadow 0.35s ease,
+    border-color 0.35s ease;
+}
+
+.card-3d:hover {
+  transform: perspective(1000px) translateY(-5px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.28);
+}
+
+.shadow-glow {
+  box-shadow: 0 0 30px rgba(66, 213, 245, 0.2);
+}
+
+/* ===== TEXT ACCENTS ===== */
+.text-gradient-sea,
+.text-gradient-deep {
+  background: linear-gradient(120deg, #f4f8fc 0%, #42d5f5 65%, #82e8ff 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ===== BUTTON AND LINK POLISH ===== */
+a,
+button {
+  transition:
+    color 0.25s ease,
+    background-color 0.25s ease,
+    border-color 0.25s ease;
+}
+
+/* ===== SCROLLBAR ===== */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
   }
-  .text-gradient-deep {
-    background: linear-gradient(120deg, #0f6685 0%, #15536d 50%, #0a82ab 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-  }
-  .glass {
-    background: rgba(255, 255, 255, 0.72);
-    backdrop-filter: blur(14px);
-    border: 1px solid rgba(255, 255, 255, 0.9);
-    box-shadow: 0 8px 30px -12px rgba(15, 102, 133, 0.18);
-  }
-  .glass-light {
-    background: rgba(255, 255, 255, 0.5);
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(255, 255, 255, 0.7);
-  }
-  .card-3d {
-    transform-style: preserve-3d;
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.5s ease;
-  }
-  .card-3d:hover {
-    transform: perspective(1000px) rotateX(3deg) rotateY(-5deg) translateY(-8px);
-    box-shadow: 0 30px 60px -20px rgba(10, 163, 212, 0.30), 0 0 0 1px rgba(34, 194, 240, 0.30);
-  }
-  .shadow-glow {
-    box-shadow: 0 0 40px -8px rgba(34, 194, 240, 0.40);
-  }
-  .shadow-soft {
-    box-shadow: 0 10px 40px -12px rgba(15, 102, 133, 0.15);
-  }
-  .shadow-card {
-    box-shadow: 0 4px 24px -8px rgba(15, 102, 133, 0.12), 0 1px 3px rgba(15, 102, 133, 0.08);
-  }
-  .grid-bg {
-    background-image:
-      linear-gradient(rgba(15, 102, 133, 0.06) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(15, 102, 133, 0.06) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  .grid-bg-light {
-    background-image:
-      linear-gradient(rgba(34, 194, 240, 0.05) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(34, 194, 240, 0.05) 1px, transparent 1px);
-    background-size: 48px 48px;
-  }
-  .scrollbar-hide::-webkit-scrollbar { display: none; }
-  .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-  .section-gradient {
-    background: linear-gradient(180deg, #f8fafc 0%, #ecfbff 50%, #f1f5f9 100%);
-  }
-  .hero-overlay {
-    background: linear-gradient(105deg, rgba(241,245,249,0.92) 0%, rgba(236,251,255,0.75) 45%, rgba(241,245,249,0.30) 100%);
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
 }

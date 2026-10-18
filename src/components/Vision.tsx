@@ -1,9 +1,25 @@
 
 import { useEffect, useRef, useState } from 'react';
-import { Eye, Target, Leaf, Globe2, ArrowUpRight } from 'lucide-react';
+import type { CSSProperties } from 'react';
+import {
+  Eye,
+  Target,
+  Leaf,
+  Globe2,
+  ArrowUpRight,
+} from 'lucide-react';
 import { visionPillars, visionStatement } from '@/data';
 
-const iconMap = { Eye, Target, Leaf, Globe: Globe2 };
+/* -------------------- TYPES & ICONS -------------------- */
+
+const iconMap = {
+  Eye,
+  Target,
+  Leaf,
+  Globe: Globe2,
+} as const;
+
+type VisionIconName = keyof typeof iconMap;
 
 const pillarThemes = [
   { color: '#38BDF8', bg: '#102F49', border: '#235675' },
@@ -12,29 +28,320 @@ const pillarThemes = [
   { color: '#C4B5FD', bg: '#292744', border: '#49446F' },
 ];
 
-const portImg =
-  'https://images.pexels.com/photos/20581299/pexels-photo-20581299.jpeg?auto=compress&cs=tinysrgb&h=650&w=940';
+const ports = [
+  { name: 'Mumbai', x: 315, y: 155, color: '#5EEAD4' },
+  { name: 'Dubai', x: 292, y: 140, color: '#FBBF65' },
+  { name: 'Singapore', x: 360, y: 188, color: '#38BDF8' },
+  { name: 'Rotterdam', x: 255, y: 98, color: '#5EEAD4' },
+  { name: 'New York', x: 155, y: 115, color: '#FBBF65' },
+  { name: 'Shanghai', x: 385, y: 120, color: '#C4B5FD' },
+];
+
+/* -------------------- ANIMATED SVG GLOBE -------------------- */
+
+function GlobeIllustration() {
+  return (
+    <svg
+      viewBox="0 0 520 400"
+      className="vision-globe-svg"
+      role="img"
+      aria-label="Illustrated globe showing international shipping routes and ports"
+    >
+      <defs>
+        <radialGradient id="vision-ocean" cx="35%" cy="28%" r="75%">
+          <stop offset="0%" stopColor="#17657A" />
+          <stop offset="55%" stopColor="#0B4051" />
+          <stop offset="100%" stopColor="#061927" />
+        </radialGradient>
+
+        <linearGradient id="vision-rim" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stopColor="#83F5DE" stopOpacity=".9" />
+          <stop offset="50%" stopColor="#38BDF8" stopOpacity=".35" />
+          <stop offset="100%" stopColor="#83F5DE" stopOpacity=".7" />
+        </linearGradient>
+
+        <clipPath id="vision-globe-clip">
+          <circle cx="260" cy="180" r="145" />
+        </clipPath>
+
+        <filter id="vision-glow">
+          <feGaussianBlur stdDeviation="3" result="blur" />
+          <feMerge>
+            <feMergeNode in="blur" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        <path
+          id="vision-shipping-path"
+          d="M 315 155 Q 290 104 255 98 Q 205 75 155 115 Q 250 185 360 188"
+          fill="none"
+        />
+      </defs>
+
+      {/* Globe atmosphere */}
+      <circle
+        cx="260"
+        cy="180"
+        r="160"
+        fill="#38BDF8"
+        opacity=".035"
+      />
+
+      <circle
+        cx="260"
+        cy="180"
+        r="151"
+        fill="none"
+        stroke="#5EEAD4"
+        strokeWidth="1"
+        opacity=".2"
+      />
+
+      {/* Rotating globe */}
+      <g className="vision-globe-spin" clipPath="url(#vision-globe-clip)">
+        <circle
+          cx="260"
+          cy="180"
+          r="145"
+          fill="url(#vision-ocean)"
+        />
+
+        {/* Longitude lines */}
+        {[35, 70, 105, 140].map((width) => (
+          <ellipse
+            key={`lon-${width}`}
+            cx="260"
+            cy="180"
+            rx={width}
+            ry="145"
+            fill="none"
+            stroke="#8BE0D1"
+            strokeWidth=".7"
+            opacity=".22"
+          />
+        ))}
+
+        {/* Latitude lines */}
+        {[55, 95, 125].map((height) => (
+          <ellipse
+            key={`lat-${height}`}
+            cx="260"
+            cy="180"
+            rx="145"
+            ry={height}
+            fill="none"
+            stroke="#8BE0D1"
+            strokeWidth=".7"
+            opacity=".22"
+          />
+        ))}
+
+        {/* Simplified continents */}
+        <g
+          fill="#32796F"
+          stroke="#91DAB6"
+          strokeWidth=".8"
+          strokeOpacity=".48"
+        >
+          <path d="M120 85 L145 62 180 66 199 82 218 87 214 108 194 119 183 145 163 151 151 128 131 119Z" />
+          <path d="M184 151 L204 157 217 178 210 205 199 232 186 249 176 224 180 201 169 179Z" />
+          <path d="M236 75 L254 63 280 70 294 87 282 102 265 105 256 126 238 117 227 97Z" />
+          <path d="M245 121 L269 112 290 125 302 152 292 180 277 207 260 231 246 212 240 181 228 158Z" />
+          <path d="M282 78 L310 61 350 66 385 83 408 104 391 122 367 119 351 137 331 127 312 140 297 115 276 103Z" />
+          <path d="M328 144 L352 147 373 165 365 180 343 178 330 165Z" />
+          <path d="M360 209 L385 202 405 217 397 238 375 246 357 230Z" />
+          <path d="M112 64 L130 51 148 57 142 74 124 78Z" />
+        </g>
+
+        {/* Shipping routes */}
+        <g
+          fill="none"
+          strokeWidth="1.6"
+          strokeDasharray="5 5"
+          opacity=".85"
+        >
+          <path
+            d="M315 155 Q285 115 255 98"
+            stroke="#5EEAD4"
+          />
+          <path
+            d="M255 98 Q205 80 155 115"
+            stroke="#FBBF65"
+          />
+          <path
+            d="M360 188 Q380 147 385 120"
+            stroke="#38BDF8"
+          />
+          <path
+            d="M255 98 Q320 90 385 120"
+            stroke="#C4B5FD"
+          />
+          <path
+            d="M315 155 Q340 182 360 188"
+            stroke="#5EEAD4"
+          />
+        </g>
+
+        {/* Port markers */}
+        {ports.map((port) => (
+          <g key={port.name}>
+            <circle
+              cx={port.x}
+              cy={port.y}
+              r="9"
+              fill={port.color}
+              opacity=".13"
+            />
+            <circle
+              cx={port.x}
+              cy={port.y}
+              r="4"
+              fill={port.color}
+              filter="url(#vision-glow)"
+            />
+            <circle
+              cx={port.x}
+              cy={port.y}
+              r="2"
+              fill="#FFFFFF"
+            />
+          </g>
+        ))}
+      </g>
+
+      {/* Globe rim */}
+      <circle
+        cx="260"
+        cy="180"
+        r="145"
+        fill="none"
+        stroke="url(#vision-rim)"
+        strokeWidth="1.6"
+      />
+
+      {/* Moving cargo ship */}
+      <g className="vision-ship">
+        <animateMotion
+          dur="12s"
+          repeatCount="indefinite"
+          rotate="auto"
+          path="M 315 155 Q 290 104 255 98 Q 205 75 155 115 Q 250 185 360 188"
+        />
+        <g transform="translate(-8 -5)">
+          <path
+            d="M-12 2 L12 2 L7 9 L-8 9 Z"
+            fill="#F4A765"
+          />
+          <rect
+            x="-5"
+            y="-5"
+            width="12"
+            height="7"
+            rx="1"
+            fill="#F4D198"
+          />
+          <rect
+            x="-3"
+            y="-9"
+            width="7"
+            height="4"
+            rx=".5"
+            fill="#5EEAD4"
+          />
+          <circle
+            cx="0"
+            cy="2"
+            r="14"
+            fill="#FBBF65"
+            opacity=".13"
+          />
+        </g>
+      </g>
+
+      {/* Orbiting decorative ring */}
+      <ellipse
+        cx="260"
+        cy="180"
+        rx="178"
+        ry="57"
+        transform="rotate(-24 260 180)"
+        fill="none"
+        stroke="#5EEAD4"
+        strokeWidth=".8"
+        strokeDasharray="3 8"
+        opacity=".3"
+      />
+
+      <circle cx="94" cy="111" r="2" fill="#5EEAD4">
+        <animate
+          attributeName="opacity"
+          values=".3;1;.3"
+          dur="2s"
+          repeatCount="indefinite"
+        />
+      </circle>
+
+      <circle cx="410" cy="226" r="2" fill="#FBBF65">
+        <animate
+          attributeName="opacity"
+          values="1;.25;1"
+          dur="2.7s"
+          repeatCount="indefinite"
+        />
+      </circle>
+    </svg>
+  );
+}
+
+/* -------------------- VISION SECTION -------------------- */
 
 export default function Vision() {
   const sectionRef = useRef<HTMLElement>(null);
+
   const [isVisible, setIsVisible] = useState(false);
+  const [reducedMotion, setReducedMotion] = useState(false);
 
   useEffect(() => {
+    const motionPreference = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    );
+
+    const updateMotion = () => {
+      setReducedMotion(motionPreference.matches);
+    };
+
+    updateMotion();
+
+    motionPreference.addEventListener('change', updateMotion);
+
     const section = sectionRef.current;
-    if (!section) return;
+
+    if (!section) {
+      return () => {
+        motionPreference.removeEventListener('change', updateMotion);
+      };
+    }
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting) {
+        if (entry?.isIntersecting) {
           setIsVisible(true);
           observer.disconnect();
         }
       },
-      { threshold: 0.12, rootMargin: '0px 0px -40px 0px' }
+      {
+        threshold: 0.12,
+        rootMargin: '0px 0px -40px 0px',
+      },
     );
 
     observer.observe(section);
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      motionPreference.removeEventListener('change', updateMotion);
+    };
   }, []);
 
   return (
@@ -43,33 +350,15 @@ export default function Vision() {
       id="vision"
       className={`vision-section relative overflow-hidden section-gradient py-24 lg:py-32 ${
         isVisible ? 'vision-visible' : ''
-      }`}
+      } ${reducedMotion ? 'vision-reduced-motion' : ''}`}
     >
       <style>{`
         .vision-section {
           isolation: isolate;
         }
 
-        .vision-orb {
-          animation: visionOrb 12s ease-in-out infinite alternate;
-          will-change: transform;
-        }
-
-        .vision-orb-two {
-          animation-delay: -5s;
-          animation-duration: 15s;
-        }
-
-        .vision-grid {
-          background-size: 46px 46px;
-          background-image:
-            linear-gradient(rgba(56,189,248,.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(56,189,248,.035) 1px, transparent 1px);
-          mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
-        }
-
         .vision-heading,
-        .vision-image-panel,
+        .vision-world-panel,
         .vision-card,
         .vision-support {
           opacity: 0;
@@ -79,76 +368,32 @@ export default function Vision() {
         }
 
         .vision-heading {
-          transform: translateY(32px);
+          transform: translateY(30px);
         }
 
-        .vision-image-panel {
-          transform: translateX(-38px) scale(.98);
-          transition-delay: .15s;
+        .vision-world-panel {
+          transform: translateY(24px) scale(.985);
+          transition-delay: .12s;
+          box-shadow: 0 24px 70px rgba(0,0,0,.24);
         }
 
         .vision-card {
-          transform: translateY(34px) scale(.97);
+          transform: translateY(28px);
           transition-delay: var(--delay, 0ms);
+          transform-style: preserve-3d;
         }
 
         .vision-support {
-          transform: translateY(24px);
+          transform: translateY(20px);
           transition-delay: .5s;
         }
 
         .vision-visible .vision-heading,
-        .vision-visible .vision-image-panel,
+        .vision-visible .vision-world-panel,
         .vision-visible .vision-card,
         .vision-visible .vision-support {
           opacity: 1;
-          transform: translate(0, 0) scale(1);
-        }
-
-        .vision-title-line {
-          transform: scaleX(0);
-          transform-origin: left;
-          transition: transform 1s cubic-bezier(.2,.75,.25,1) .45s;
-        }
-
-        .vision-visible .vision-title-line {
-          transform: scaleX(1);
-        }
-
-        .vision-image {
-          transform: scale(1.08);
-          transition: transform 1.5s cubic-bezier(.2,.75,.25,1);
-        }
-
-        .vision-visible .vision-image {
-          transform: scale(1);
-        }
-
-        .vision-image-panel:hover .vision-image {
-          transform: scale(1.07);
-        }
-
-        .vision-image-panel::after {
-          content: '';
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-          background: linear-gradient(
-            115deg,
-            transparent 25%,
-            rgba(255,255,255,.10) 48%,
-            transparent 68%
-          );
-          transform: translateX(-120%);
-          transition: transform 1s ease;
-        }
-
-        .vision-image-panel:hover::after {
-          transform: translateX(120%);
-        }
-
-        .vision-card {
-          transform-style: preserve-3d;
+          transform: translateY(0) scale(1);
         }
 
         .vision-card::before {
@@ -160,16 +405,15 @@ export default function Vision() {
           opacity: 0;
           background: radial-gradient(
             circle at 50% 0%,
-            var(--glow-color, rgba(56,189,248,.15)),
+            var(--glow-color),
             transparent 68%
           );
-          transition: opacity .4s ease;
+          transition: opacity .35s ease;
         }
 
         .vision-card:hover {
-          transform: translateY(-8px) !important;
-          border-color: var(--glow-color, #38BDF8) !important;
-          box-shadow: 0 18px 45px rgba(0,0,0,.2);
+          transform: translateY(-7px) !important;
+          border-color: var(--glow-color) !important;
         }
 
         .vision-card:hover::before {
@@ -177,18 +421,16 @@ export default function Vision() {
         }
 
         .vision-card-icon {
-          transition:
-            transform .45s cubic-bezier(.2,.8,.2,1),
-            box-shadow .45s ease;
+          transition: transform .4s ease, box-shadow .4s ease;
         }
 
         .vision-card:hover .vision-card-icon {
-          transform: translateY(-3px) rotate(-6deg) scale(1.07);
-          box-shadow: 0 0 24px var(--glow-color, rgba(56,189,248,.18));
+          transform: translateY(-3px) rotate(-5deg);
+          box-shadow: 0 0 22px var(--glow-color);
         }
 
         .vision-card-number {
-          transition: transform .5s ease, opacity .5s ease;
+          transition: transform .45s ease, opacity .45s ease;
         }
 
         .vision-card:hover .vision-card-number {
@@ -197,7 +439,7 @@ export default function Vision() {
         }
 
         .vision-card-arrow {
-          transition: transform .35s ease;
+          transition: transform .3s ease;
         }
 
         .vision-card:hover .vision-card-arrow {
@@ -205,43 +447,61 @@ export default function Vision() {
         }
 
         .vision-card-accent {
-          width: 25%;
-          transition: width .5s cubic-bezier(.2,.75,.25,1);
+          width: 24%;
+          transition: width .45s cubic-bezier(.2,.75,.25,1);
         }
 
         .vision-card:hover .vision-card-accent {
           width: 100%;
         }
 
-        .vision-ship-badge {
-          animation: visionFloat 4s ease-in-out infinite;
-        }
-
         .vision-pulse-dot {
           animation: visionPulse 2s ease-in-out infinite;
         }
 
-        .vision-support-icon {
-          transition: transform .4s ease;
+        .vision-world-kicker {
+          animation: visionBreathe 4s ease-in-out infinite;
         }
 
-        .vision-support:hover .vision-support-icon {
-          transform: rotate(8deg) scale(1.08);
+        .vision-globe-svg {
+          display: block;
+          width: 100%;
+          height: 100%;
+          overflow: visible;
         }
 
-        @keyframes visionOrb {
-          from { transform: translate3d(-10px, -12px, 0) scale(1); }
-          to { transform: translate3d(24px, 20px, 0) scale(1.12); }
+        .vision-globe-spin {
+          transform-origin: 260px 180px;
+          animation: visionGlobeSpin 48s linear infinite;
         }
 
-        @keyframes visionFloat {
-          0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-7px); }
+        .vision-ship {
+          filter: drop-shadow(0 0 5px rgba(251,191,101,.7));
+        }
+
+        @keyframes visionGlobeSpin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
         @keyframes visionPulse {
-          0%, 100% { box-shadow: 0 0 0 0 rgba(94,234,212,.35); }
-          50% { box-shadow: 0 0 0 7px rgba(94,234,212,0); }
+          0%, 100% {
+            box-shadow: 0 0 0 0 rgba(94,234,212,.35);
+          }
+          50% {
+            box-shadow: 0 0 0 7px rgba(94,234,212,0);
+          }
+        }
+
+        @keyframes visionBreathe {
+          0%, 100% { opacity: .75; }
+          50% { opacity: 1; }
+        }
+
+        .vision-reduced-motion .vision-globe-spin,
+        .vision-reduced-motion .vision-pulse-dot,
+        .vision-reduced-motion .vision-world-kicker {
+          animation: none !important;
         }
 
         @media (prefers-reduced-motion: reduce) {
@@ -254,31 +514,18 @@ export default function Vision() {
           }
 
           .vision-heading,
-          .vision-image-panel,
+          .vision-world-panel,
           .vision-card,
           .vision-support {
             opacity: 1 !important;
             transform: none !important;
           }
-
-          .vision-title-line {
-            transform: scaleX(1) !important;
-          }
-
-          .vision-image {
-            transform: none !important;
-          }
         }
       `}</style>
 
-      {/* Animated ambient lighting */}
-      <div className="vision-orb pointer-events-none absolute -left-24 top-20 -z-10 h-72 w-72 rounded-full bg-cyan-400/[0.07] blur-3xl" />
-      <div className="vision-orb vision-orb-two pointer-events-none absolute bottom-10 right-0 -z-10 h-80 w-80 rounded-full bg-blue-500/[0.08] blur-3xl" />
-      <div className="vision-grid pointer-events-none absolute inset-0 -z-10 opacity-60" />
-
       <div className="relative mx-auto max-w-7xl px-5 lg:px-8">
-        {/* Animated heading */}
-        <div className="vision-heading mb-14 max-w-3xl">
+        {/* Heading */}
+        <div className="vision-heading mb-10 max-w-3xl lg:mb-12">
           <span className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.22em] text-cyan-400">
             <Eye className="h-4 w-4" />
             <span>Our Vision</span>
@@ -289,31 +536,40 @@ export default function Vision() {
             {visionStatement.heading}
           </h2>
 
-          <div className="vision-title-line mt-5 h-1 w-20 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" />
+          <div className="mt-5 h-1 w-20 rounded-full bg-gradient-to-r from-cyan-400 to-blue-500" />
         </div>
 
-        <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:items-stretch">
-          {/* Cinematic port image */}
-          <div className="vision-image-panel group relative min-h-[420px] overflow-hidden rounded-3xl border border-white/10 bg-[#0A1D33] shadow-2xl sm:min-h-[480px]">
-            <img
-              src={portImg}
-              alt="Container port representing global shipping and trade"
-              loading="lazy"
-              className="vision-image absolute inset-0 h-full w-full object-cover"
-            />
-
-            <div className="absolute inset-0 bg-gradient-to-t from-[#061426] via-[#061426]/25 to-transparent" />
-            <div className="absolute inset-0 bg-gradient-to-r from-[#061426]/20 to-transparent" />
-
-            {/* Floating image badge */}
-            <div className="vision-ship-badge absolute right-5 top-5 rounded-2xl border border-white/20 bg-[#061426]/70 p-3 shadow-lg backdrop-blur-md">
-              <ShipIcon />
+        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+          {/* Animated globe */}
+          <div className="vision-world-panel relative min-h-[440px] overflow-hidden rounded-3xl border border-white/10 bg-[#071927] sm:min-h-[500px]">
+            <div className="absolute inset-0">
+              <GlobeIllustration />
             </div>
 
-            <div className="absolute inset-x-0 bottom-0 p-6 sm:p-8">
-              <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-white/20 bg-[#061426]/65 px-3 py-2 text-xs font-semibold text-white backdrop-blur-md">
-                <Globe2 className="h-4 w-4 text-cyan-300" />
-                Connecting Businesses Worldwide
+            {/* Top overlay */}
+            <div className="pointer-events-none absolute inset-x-0 top-0 flex items-start justify-between gap-3 p-5 sm:p-7">
+              <div>
+                <div className="vision-world-kicker text-[10px] font-semibold uppercase tracking-[0.24em] text-teal-200/80">
+                  Shared horizon · connected future
+                </div>
+
+                <div className="mt-2 flex items-center gap-2 text-xs font-medium text-white/75">
+                  <Globe2 className="h-4 w-4 text-cyan-300" />
+                  Worldwide, by design
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 rounded-full border border-white/15 bg-slate-950/35 px-3 py-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-teal-100/90 backdrop-blur-sm">
+                <span className="vision-pulse-dot h-1.5 w-1.5 rounded-full bg-teal-300" />
+                One connected world
+              </div>
+            </div>
+
+            {/* Bottom overlay */}
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#061522] via-[#061522]/90 to-transparent px-6 pb-6 pt-24 sm:px-8 sm:pb-8">
+              <div className="mb-3 inline-flex items-center gap-2 text-xs font-semibold text-cyan-200">
+                <span className="h-px w-7 bg-cyan-300/80" />
+                GLOBAL REACH. LASTING IMPACT.
               </div>
 
               <h3 className="max-w-md font-display text-2xl font-bold leading-snug text-white sm:text-3xl">
@@ -326,47 +582,49 @@ export default function Vision() {
               <p className="mt-3 max-w-md text-sm leading-6 text-slate-300">
                 {visionStatement.body}
               </p>
-
-              <div className="mt-6 flex items-center gap-2 text-xs font-medium tracking-wide text-cyan-200/90">
-                <span className="h-px w-8 bg-cyan-300/70" />
-                GLOBAL REACH. LASTING IMPACT.
-              </div>
             </div>
           </div>
 
-          {/* Animated vision cards */}
+          {/* Vision cards */}
           <div className="grid gap-5 sm:grid-cols-2">
-            {visionPillars.map((p, i) => {
-              const Icon = iconMap[p.icon as keyof typeof iconMap];
-              const theme = pillarThemes[i % pillarThemes.length];
+            {visionPillars.map((pillar, index) => {
+              const iconName = pillar.icon as VisionIconName;
+              const Icon = iconMap[iconName];
+              const theme = pillarThemes[index % pillarThemes.length];
+
+              if (!Icon || !theme) return null;
 
               return (
                 <article
-                  key={p.id}
+                  key={pillar.id}
                   className="vision-card group relative overflow-hidden rounded-3xl border p-6 sm:p-7"
-                  style={{
-                    backgroundColor: theme.bg,
-                    borderColor: theme.border,
-                    '--delay': `${250 + i * 140}ms`,
-                    '--glow-color': `${theme.color}35`,
-                  } as React.CSSProperties}
+                  style={
+                    {
+                      backgroundColor: theme.bg,
+                      borderColor: theme.border,
+                      '--delay': `${180 + index * 120}ms`,
+                      '--glow-color': `${theme.color}35`,
+                    } as CSSProperties
+                  }
                 >
-                  {/* Large decorative number */}
                   <span
                     className="vision-card-number pointer-events-none absolute -right-1 -top-5 font-display text-7xl font-extrabold opacity-[0.08]"
                     style={{ color: theme.color }}
+                    aria-hidden="true"
                   >
-                    {String(i + 1).padStart(2, '0')}
+                    {String(index + 1).padStart(2, '0')}
                   </span>
 
                   <div className="relative flex items-start justify-between gap-3">
                     <div
                       className="vision-card-icon grid h-14 w-14 place-items-center rounded-2xl border"
-                      style={{
-                        backgroundColor: `${theme.color}15`,
-                        borderColor: `${theme.color}35`,
-                        '--glow-color': `${theme.color}30`,
-                      } as React.CSSProperties}
+                      style={
+                        {
+                          backgroundColor: `${theme.color}15`,
+                          borderColor: `${theme.color}35`,
+                          '--glow-color': `${theme.color}30`,
+                        } as CSSProperties
+                      }
                     >
                       <Icon
                         className="h-7 w-7"
@@ -382,14 +640,13 @@ export default function Vision() {
                   </div>
 
                   <h3 className="relative mt-7 font-display text-lg font-bold text-white">
-                    {p.title}
+                    {pillar.title}
                   </h3>
 
                   <p className="relative mt-3 text-sm leading-7 text-slate-300">
-                    {p.desc}
+                    {pillar.desc}
                   </p>
 
-                  {/* Animated colored accent */}
                   <div
                     className="vision-card-accent absolute bottom-0 left-0 h-1"
                     style={{ backgroundColor: theme.color }}
@@ -403,7 +660,7 @@ export default function Vision() {
         {/* Supporting statement */}
         <div className="vision-support group relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.04] p-6 transition-colors duration-300 hover:border-cyan-300/30 hover:bg-white/[0.06] sm:p-8">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-            <div className="vision-support-icon grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-cyan-300/10 bg-cyan-400/10">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-xl border border-cyan-300/10 bg-cyan-400/10">
               <Target className="h-6 w-6 text-cyan-300" />
             </div>
 
@@ -416,25 +673,5 @@ export default function Vision() {
         </div>
       </div>
     </section>
-  );
-}
-
-function ShipIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="#5EEAD4"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className="h-6 w-6"
-      aria-hidden="true"
-    >
-      <path d="M3 17l2 3h14l2-3" />
-      <path d="M5 17l2-8h10l2 8" />
-      <path d="M10 9V4h4v5" />
-      <path d="M2 14h20" />
-    </svg>
   );
 }
